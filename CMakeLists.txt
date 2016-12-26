@@ -47,6 +47,7 @@ find_package(Boost REQUIRED COMPONENTS system thread)
 add_message_files(
   FILES
   Command.msg
+  Attitude.msg
 )
 
 ## Generate services in the 'srv' folder

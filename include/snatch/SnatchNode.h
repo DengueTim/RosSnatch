@@ -20,6 +20,7 @@
 #include <sensor_msgs/Temperature.h>
 #include <sensor_msgs/Range.h>
 
+#include <snatch/Attitude.h>
 #include <snatch/Command.h>
 #include <snatch/GetValue.h>
 #include <snatch/SetValue.h>
@@ -42,6 +43,7 @@ public:
 	virtual void handleParserEvent(const snatch_status_event_t * const event);
 
 private:
+	ros::Time toRosTime(uint32_t fc_time);
 
 	// ROS message callbacks
 	void commandCallback(Command::ConstPtr msg);

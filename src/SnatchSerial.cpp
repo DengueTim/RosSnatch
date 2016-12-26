@@ -25,7 +25,7 @@ SnatchSerial::SnatchSerial(std::string port, int baud_rate, SnatchParser *parser
 		serial_port_.set_option(serial_port_base::parity(serial_port_base::parity::none));
 		serial_port_.set_option(serial_port_base::stop_bits(serial_port_base::stop_bits::one));
 		serial_port_.set_option(serial_port_base::flow_control(serial_port_base::flow_control::none));
-	} catch (boost::system::system_error e) {
+	} catch (boost::system::system_error &e) {
 		throw SnatchSerialException(e);
 	}
 

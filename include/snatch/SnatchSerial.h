@@ -33,7 +33,7 @@ public:
 
 	void sendCommandChar(const uint8_t command);
 
-	void setChannelValue(const uint8_t channel, const double value);
+	void setChannelValue(const uint8_t channel, const uint16_t value);
 
 	void sendChannelValues();
 

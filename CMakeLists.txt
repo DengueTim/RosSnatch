@@ -53,6 +53,7 @@ add_message_files(
 ## Generate services in the 'srv' folder
 add_service_files(
   FILES
+  GetState.srv
   GetValue.srv
   SetValue.srv
 )

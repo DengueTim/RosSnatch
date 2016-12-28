@@ -22,6 +22,7 @@
 
 #include <snatch/Attitude.h>
 #include <snatch/Command.h>
+#include <snatch/GetState.h>
 #include <snatch/GetValue.h>
 #include <snatch/SetValue.h>
 #include <snatch/SnatchSerial.h>
@@ -48,6 +49,7 @@ private:
 	// ROS message callbacks
 	void commandCallback(Command::ConstPtr msg);
 
+	bool getStateSrvCallback(GetState::Request &req, GetState::Response &res);
 	bool getValueSrvCallback(GetValue::Request &req, GetValue::Response &res);
 	bool setValueSrvCallback(SetValue::Request &req, SetValue::Response &res);
 
@@ -58,6 +60,10 @@ private:
 	ros::Subscriber command_sub_;
 
 	ros::Publisher attitude_pub_;
+
+	ros::Publisher rx_command_pub_;
+
+	ros::ServiceServer get_state_srv_;
 
 	ros::ServiceServer get_value_srv_;
 

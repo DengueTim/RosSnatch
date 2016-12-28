@@ -72,7 +72,7 @@ void SnatchSerial::async_read_end(const boost::system::error_code &error, size_t
 	}
 }
 
-void SnatchSerial::setChannelValue(const uint8_t channel, const double value) {
+void SnatchSerial::setChannelValue(const uint8_t channel, const uint16_t value) {
 	if (channel < 0x0 || channel > 0xF) {
 		return;
 	}
@@ -85,14 +85,14 @@ void SnatchSerial::setChannelValue(const uint8_t channel, const double value) {
 		channel_id = 'A' + channel;
 	}
 
-	// Convert value to int 0 to 999
+	// Limit value between 0 to 999 inclusively
 	uint16_t channel_value;
-	if (value >= 1.0) {
+	if (value >= 1000) {
 		channel_value = 999;
-	} else if (value <= 0.0) {
+	} else if (value <= 0) {
 		channel_value = 0;
 	} else {
-		channel_value = (uint16_t)(value * 1000);
+		channel_value = value;
 	}
 
 	uint8_t channel_index = channel_id * 4;

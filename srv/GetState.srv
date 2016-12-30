@@ -1,5 +1,4 @@
 ---
 bool streamming
 bool in_fallback
-Command current_command
-
+Channels channels

@@ -28,8 +28,17 @@ SnatchNode::SnatchNode() {
 		ros::shutdown();
 	}
 
-	std_msgs::Bool unsaved_msg;
-	unsaved_msg.data = false;
+
+	// Stop streaming.
+	serial_->sendCommandChar('-');
+	state_.streamming = false;
+
+	// Fallback to RX.
+	serial_->sendCommandChar('<');
+	state_.in_fallback = false;
+
+	// Get the current status.
+	serial_->sendCommandChar('?');
 }
 
 SnatchNode::~SnatchNode() {
@@ -42,14 +51,14 @@ ros::Time SnatchNode::toRosTime(uint32_t fc_time) {
 }
 
 void SnatchNode::handleParserEvent(const snatch_imu_event_t * const event) {
-	snatch::Attitude attitude_msg;
+	Attitude attitude_msg;
 	attitude_msg.header.stamp = toRosTime(event->time);
 	attitude_msg.roll = event->roll;
 	attitude_msg.pitch = event->pitch;
 	attitude_msg.yaw = event->yaw;
 
 	if (attitude_pub_.getTopic().empty()) {
-		attitude_pub_ = nh_.advertise<snatch::Attitude>("attitude", 1);
+		attitude_pub_ = nh_.advertise<Attitude>("attitude", 1);
 	}
 	attitude_pub_.publish(attitude_msg);
 }
@@ -58,52 +67,61 @@ void SnatchNode::handleParserEvent(const snatch_imu_event_t * const event) {
 #define channelTo1to1(v)	((((float)(v)) - 500) / 500)
 
 void SnatchNode::handleParserEvent(const snatch_rx_event_t * const event) {
-	snatch::Command command_msg;
-	command_msg.header.stamp = toRosTime(event->time);
-	const uint16_t* channels = event->channels;
-	command_msg.roll = channelTo1to1(channels[0]);
-	command_msg.pitch = channelTo1to1(channels[1]);
-	command_msg.yaw = channelTo1to1(channels[2]);
-	command_msg.throttle = channelTo0to1(channels[3]);
-
-	for (int i = 0 ; i < 8 ; i++) {
-		command_msg.aux[i] = channelTo0to1(channels[i+4]);
-	}
+	Command command;
+	command.header.stamp = toRosTime(event->time);
+	updateChannels(event->channels, command.channels);
 
 	if (rx_command_pub_.getTopic().empty()) {
-		rx_command_pub_ = nh_.advertise<snatch::Command>("rx_command", 1);
+		rx_command_pub_ = nh_.advertise<Command>("rx_command", 1);
 	}
-	rx_command_pub_.publish(command_msg);
+	rx_command_pub_.publish(command);
 }
 
 void SnatchNode::handleParserEvent(const snatch_status_event_t * const event) {
-
+	updateChannels(event->channels, state_.channels);
 }
+
+
 
 #define channelFrom0to1(v)	((uint16_t)(v * 1000))
 #define channelFrom1to1(v)	((uint16_t)(v * 500) + 500)
 
-void SnatchNode::commandCallback(snatch::Command::ConstPtr command_msg) {
-	serial_->setChannelValue(0, channelFrom1to1(command_msg->roll));
-	serial_->setChannelValue(1, channelFrom1to1(command_msg->pitch));
-	serial_->setChannelValue(2, channelFrom1to1(command_msg->yaw));
-	serial_->setChannelValue(3, channelFrom0to1(command_msg->throttle));
+void SnatchNode::commandCallback(Command::ConstPtr command) {
+	serial_->setChannelValue(0, channelFrom1to1(command->channels.roll));
+	serial_->setChannelValue(1, channelFrom1to1(command->channels.pitch));
+	serial_->setChannelValue(2, channelFrom1to1(command->channels.yaw));
+	serial_->setChannelValue(3, channelFrom0to1(command->channels.throttle));
 
 	for (int i = 0 ; i < 8 ; i++) {
-		serial_->setChannelValue(i + 4, channelFrom0to1(command_msg->aux[i]));
+		serial_->setChannelValue(i + 4, channelFrom0to1(command->channels.aux[i]));
 	}
+
+	serial_->sendChannelValues();
 }
 
 bool SnatchNode::getStateSrvCallback(GetState::Request &req, GetState::Response &res) {
-
+	// Copy state_ to response.
+	res = state_;
+	return true;
 }
 
-bool SnatchNode::getValueSrvCallback(snatch::GetValue::Request &req, snatch::GetValue::Response &res) {
+bool SnatchNode::getValueSrvCallback(GetValue::Request &req, GetValue::Response &res) {
 	return false;
 }
 
-bool SnatchNode::setValueSrvCallback(snatch::SetValue::Request &req, snatch::SetValue::Response &res) {
+bool SnatchNode::setValueSrvCallback(SetValue::Request &req, SetValue::Response &res) {
 	return false;
+}
+
+void updateChannels(const uint16_t* const from, Channels &to) {
+	to.roll = channelTo1to1(from[0]);
+	to.pitch = channelTo1to1(from[1]);
+	to.yaw = channelTo1to1(from[2]);
+	to.throttle = channelTo0to1(from[3]);
+
+	for (int i = 0 ; i < 8 ; i++) {
+		to.aux[i] = channelTo0to1(from[i+4]);
+	}
 }
 
 } // namespace snatch

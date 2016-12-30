@@ -70,7 +70,11 @@ private:
 	ros::ServiceServer set_value_srv_;
 
 	std::string frame_id_;
+
+	GetStateResponse state_;
 };
+
+void updateChannels(const uint16_t* const from, Channels &to);
 
 } // namespace snatch
 

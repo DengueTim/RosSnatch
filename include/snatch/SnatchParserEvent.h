@@ -8,21 +8,21 @@ namespace snatch {
 typedef struct __snatch_imu_event_t {
 	uint32_t time;
 
-	uint16_t roll;
-	uint16_t pitch;
-	uint16_t yaw;
+	int16_t roll;
+	int16_t pitch;
+	int16_t yaw;
 
-	uint16_t accX;
-	uint16_t accY;
-	uint16_t accZ;
+	int16_t accX;
+	int16_t accY;
+	int16_t accZ;
 
-	uint16_t gyroX;
-	uint16_t gyroY;
-	uint16_t gyroZ;
+	int32_t gyroX;
+	int32_t gyroY;
+	int32_t gyroZ;
 
-	uint16_t magX;
-	uint16_t magY;
-	uint16_t magZ;
+	int32_t magX;
+	int32_t magY;
+	int32_t magZ;
 } snatch_imu_event_t;
 
 const int RxChannelCount = 16;

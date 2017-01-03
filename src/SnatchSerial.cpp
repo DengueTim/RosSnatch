@@ -7,6 +7,7 @@
  * https://gist.github.com/yoggy/3323808
  */
 
+#include <iostream>
 #include <boost/thread.hpp>
 #include <ros/ros.h>
 #include <snatch/SnatchSerial.h>
@@ -70,6 +71,8 @@ void SnatchSerial::async_read_end(const boost::system::error_code &error, size_t
 	for (int i = 0; i < bytes_transferred; i++) {
 		snatchParser_->parse(read_buffer_[i]);
 	}
+
+	do_async_read();
 }
 
 void SnatchSerial::setChannelValue(const uint8_t channel, const uint16_t value) {

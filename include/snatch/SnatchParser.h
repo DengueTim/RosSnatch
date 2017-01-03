@@ -40,6 +40,7 @@ private:
 	snatch_status_event_t status_event_;
 	bool statusEventParser(uint8_t byte);
 
+	uint8_t last_byte_;
 	uint8_t field_index_;
 	uint8_t field_byte_index_;
 

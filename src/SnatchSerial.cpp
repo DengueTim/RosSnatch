@@ -68,6 +68,7 @@ void SnatchSerial::async_read_end(const boost::system::error_code &error, size_t
 		return;
 	}
 
+
 	for (int i = 0; i < bytes_transferred; i++) {
 		snatchParser_->parse(read_buffer_[i]);
 	}

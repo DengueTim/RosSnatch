@@ -29,28 +29,24 @@ public:
 private:
 	SnatchParserListener *listener_;
 
-	bool (SnatchParser::*current_event_parser_)(uint8_t);
+	uint8_t last_byte_;
 
 	snatch_imu_event_t imu_event_;
-	bool imuEventParser(uint8_t byte);
-
 	snatch_rx_event_t rx_event_;
-	bool rxEventParser(uint8_t byte);
-
 	snatch_status_event_t status_event_;
-	bool statusEventParser(uint8_t byte);
 
-	uint8_t last_byte_;
-	uint8_t field_index_;
-	uint8_t field_byte_index_;
+	uint8_t *event_as_data_;
+	int32_t data_size_;
+	int32_t data_index_;
 
 	uint16_t checksum_;
-	bool checksum_low_high_;
-	void addToCheckSum(uint8_t byte);
+	bool checksum_high_not_low_;
 
 	uint16_t checksum_read_;
 
-	bool parseInt(uint8_t bytesPerInt, uint8_t byte, uint8_t *value, uint8_t elementCount = 1);
+	bool fillData(uint8_t byte);
+
+	bool checkChecksum(uint8_t byte);
 };
 
 }

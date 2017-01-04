@@ -17,7 +17,7 @@ SnatchNode::SnatchNode() {
 
 	ros::NodeHandle nh_private("~");
 
-	frame_id_ = nh_private.param<std::string>("frame_id", "FCU");
+	frame_id_ = nh_private.param<std::string>("frame_id", "Sparky");
 
 	std::string port = nh_private.param<std::string>("port", "/dev/ttyUSB0");
 	int baud_rate = nh_private.param<int>("baud_rate", 921600); //115200);
@@ -53,14 +53,21 @@ ros::Time SnatchNode::toRosTime(uint32_t fc_time) {
 }
 
 void SnatchNode::handleParserEvent(const snatch_imu_event_t * const event) {
+//	std::cerr << "IMU Time:" << event->time;
+//	std::cerr << " Roll:" << event->roll << " Pitch:" << event->pitch << " Yaw:" << event->yaw << "\t";
+//	std::cerr << "A(" << event->accX << "\t" << event->accY << "\t" << event->accZ << ")\t";
+//	std::cerr << " G(" << event->gyroX << "\t" << event->gyroY << "\t" << event->gyroZ << ")\t";
+//	std::cerr << "M(" << event->magX << "\t" << event->magY << "\t" << event->magZ << ")\n";
+
 	Attitude attitude_msg;
+	attitude_msg.header.frame_id = frame_id_;
 	attitude_msg.header.stamp = toRosTime(event->time);
 	attitude_msg.roll = event->roll;
 	attitude_msg.pitch = event->pitch;
 	attitude_msg.yaw = event->yaw;
 
 	if (attitude_pub_.getTopic().empty()) {
-		attitude_pub_ = nh_.advertise<Attitude>("attitude", 1);
+		attitude_pub_ = nh_.advertise<Attitude>("attitude", false);
 	}
 	attitude_pub_.publish(attitude_msg);
 }
@@ -69,6 +76,25 @@ void SnatchNode::handleParserEvent(const snatch_imu_event_t * const event) {
 #define channelTo1to1(v)	((((float)(v)) - 500) / 500)
 
 void SnatchNode::handleParserEvent(const snatch_rx_event_t * const event) {
+//	std::cerr << "RX  Time:" << event->time;
+//	std::cerr << " Channel values:";
+//	std::cerr << event->channels[0] << ":";
+//	std::cerr << event->channels[1] << ":";
+//	std::cerr << event->channels[2] << ":";
+//	std::cerr << event->channels[3] << ":";
+//	std::cerr << event->channels[4] << ":";
+//	std::cerr << event->channels[5] << ":";
+//	std::cerr << event->channels[6] << ":";
+//	std::cerr << event->channels[7] << ":";
+//	std::cerr << event->channels[8] << ":";
+//	std::cerr << event->channels[9] << ":";
+//	std::cerr << event->channels[10] << ":";
+//	std::cerr << event->channels[11] << ":";
+//	std::cerr << event->channels[12] << ":";
+//	std::cerr << event->channels[13] << ":";
+//	std::cerr << event->channels[14] << ":";
+//	std::cerr << event->channels[15] << "\n";
+
 	Command command;
 	command.header.stamp = toRosTime(event->time);
 	updateChannels(event->channels, command.channels);
@@ -80,6 +106,24 @@ void SnatchNode::handleParserEvent(const snatch_rx_event_t * const event) {
 }
 
 void SnatchNode::handleParserEvent(const snatch_status_event_t * const event) {
+//	std::cerr << "ST  Time:" << event->time;
+//	std::cerr << " Channel values:";
+//	std::cerr << event->channels[0] << ":";
+//	std::cerr << event->channels[1] << ":";
+//	std::cerr << event->channels[2] << ":";
+//	std::cerr << event->channels[3] << ":";
+//	std::cerr << event->channels[4] << ":";
+//	std::cerr << event->channels[5] << ":";
+//	std::cerr << event->channels[6] << ":";
+//	std::cerr << event->channels[7] << ":";
+//	std::cerr << event->channels[8] << ":";
+//	std::cerr << event->channels[9] << ":";
+//	std::cerr << event->channels[10] << ":";
+//	std::cerr << event->channels[11] << ":";
+//	std::cerr << event->channels[12] << ":";
+//	std::cerr << event->channels[13] << ":";
+//	std::cerr << event->channels[14] << ":";
+//	std::cerr << event->channels[15] << "\n";
 	updateChannels(event->channels, state_.channels);
 }
 

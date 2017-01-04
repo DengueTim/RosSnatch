@@ -5,6 +5,11 @@
 
 namespace snatch {
 
+// Representations of events as they are passed over the serial connection from the FC.
+// byte alignment is a issue here. No holes allowed.
+
+const int RxChannelCount = 16;
+
 typedef struct __snatch_imu_event_t {
 	uint32_t time;
 
@@ -24,8 +29,6 @@ typedef struct __snatch_imu_event_t {
 	int32_t magY;
 	int32_t magZ;
 } snatch_imu_event_t;
-
-const int RxChannelCount = 16;
 
 typedef struct __snatch_rx_event_t {
 	uint32_t time;

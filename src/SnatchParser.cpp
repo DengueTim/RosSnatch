@@ -12,7 +12,7 @@
 namespace snatch {
 
 SnatchParser::SnatchParser(SnatchParserListener *listener) :
-		listener_(listener), current_event_parser_(NULL), field_index_(0), field_byte_index_(0), checksum_(0), checksum_low_high_(false), checksum_read_(0) {
+		listener_(listener), current_event_parser_(NULL), field_index_(0), field_byte_index_(0), checksum_(0), checksum_high_not_low_(false), checksum_read_(0) {
 
 }
 
@@ -49,7 +49,7 @@ void SnatchParser::parse(uint8_t byte) {
 		field_index_ = 0;
 		field_byte_index_ = 0;
 		checksum_ = 0;
-		checksum_low_high_ = false;
+		checksum_high_not_low_ = false;
 		addToCheckSum(byte); // The event type char is included in the checksum.
 	}
 
@@ -193,8 +193,8 @@ bool SnatchParser::statusEventParser(uint8_t byte) {
 }
 
 void SnatchParser::addToCheckSum(uint8_t byte) {
-	checksum_ += (byte << (checksum_low_high_ ? 0 : 8));
-	checksum_low_high_ = !checksum_low_high_;
+	checksum_ += (byte << (checksum_high_not_low_ ? 8 : 0));
+	checksum_high_not_low_ = !checksum_high_not_low_;
 }
 
 // Reads one or more ints into give value address.

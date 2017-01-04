@@ -45,7 +45,7 @@ private:
 	uint8_t field_byte_index_;
 
 	uint16_t checksum_;
-	bool checksum_low_high_;
+	bool checksum_high_not_low_;
 	void addToCheckSum(uint8_t byte);
 
 	uint16_t checksum_read_;

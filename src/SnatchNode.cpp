@@ -1,4 +1,5 @@
 #include <ros/ros.h>
+#include <tf.h>
 
 #include <snatch/SnatchNode.h>
 #include <snatch/SnatchSerial.h>
@@ -67,9 +68,42 @@ void SnatchNode::handleParserEvent(const snatch_imu_event_t * const event) {
 	attitude_msg.yaw = event->yaw;
 
 	if (attitude_pub_.getTopic().empty()) {
-		attitude_pub_ = nh_.advertise<Attitude>("attitude", false);
+		attitude_pub_ = nh_.advertise<Attitude>("snatch/attitude", false);
 	}
 	attitude_pub_.publish(attitude_msg);
+
+	sensor_msgs::Imu imu_msg;
+	imu_msg.header.frame_id = frame_id_;
+	imu_msg.header.stamp = toRosTime(event->time);
+
+	tf::createQuaternionFromRPY(0,0,M_PI/2)
+
+	imu_msg.orientation.w;
+	imu_msg.orientation.x;
+	imu_msg.orientation.y;
+	imu_msg.orientation.z;
+	imu_msg.orientation_covariance[0];
+	imu_msg.orientation_covariance[4];
+	imu_msg.orientation_covariance[8];
+
+	imu_msg.linear_acceleration.x;
+	imu_msg.linear_acceleration.y;
+	imu_msg.linear_acceleration.z;
+	imu_msg.linear_acceleration_covariance[0];
+	imu_msg.linear_acceleration_covariance[4];
+	imu_msg.linear_acceleration_covariance[8];
+
+	imu_msg.angular_velocity.x;
+	imu_msg.angular_velocity.y;
+	imu_msg.angular_velocity.z;
+	imu_msg.angular_velocity_covariance[0];
+	imu_msg.angular_velocity_covariance[4];
+	imu_msg.angular_velocity_covariance[8];
+
+	if (imu_pub_.getTopic().empty()) {
+		imu_pub_ = nh_.advertise<sensor_msgs::Imu>("snatch/imu", 1);
+	}
+	imu_pub_.publish(imu_msg);
 }
 
 #define channelTo0to1(v)	(((float) (v)) / 1000)

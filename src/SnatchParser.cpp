@@ -1,6 +1,8 @@
 /*
  * SnatchPaser.cpp
  *
+ * Dodgy platfrom/compiler depended event parse, just to be quick.
+ *
  *  Created on: 17 Dec 2016
  *      Author: tp
  */

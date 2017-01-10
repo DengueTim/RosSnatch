@@ -61,6 +61,8 @@ private:
 
 	ros::Publisher attitude_pub_;
 
+	ros::Publisher imu_pub_;
+
 	ros::Publisher rx_command_pub_;
 
 	ros::ServiceServer get_state_srv_;
